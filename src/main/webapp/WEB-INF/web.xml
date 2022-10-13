@@ -1,0 +1,29 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+
+	<servlet>
+		<servlet-name>InitServlet</servlet-name>
+		<servlet-class>com.juliett.commons.init.InitServlet</servlet-class>
+		<init-param>
+			<param-name>init-property-file</param-name>
+			<param-value>WEB-INF/configs/project-juliett-local.properties</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	   <servlet>
+        <servlet-name>SampleController</servlet-name>
+        <servlet-class>com.juliett.api.SampleController.SampleController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SampleController</servlet-name>
+        <url-pattern>/sample/list</url-pattern>
+    </servlet-mapping>
+	
+	
+</web-app>
