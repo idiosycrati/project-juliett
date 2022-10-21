@@ -15,15 +15,58 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	
-	   <servlet>
+    <servlet>
         <servlet-name>SampleController</servlet-name>
         <servlet-class>com.juliett.api.SampleController.SampleController</servlet-class>
     </servlet>
+    
+	   <servlet>
+	   	<servlet-name>UsersController</servlet-name>
+	   
+	   	<description></description>
+	   	<servlet-class>com.juliett.api.UsersController.UsersController</servlet-class>
+	   </servlet>
+	   <servlet>
+	   	<servlet-name>ProductsProcess</servlet-name>
+	   	<display-name>ProductsProcess</display-name>
+	   	<description></description>
+	   	<servlet-class>com.juliett.api.ProductsProcess.ProductsProcess</servlet-class>
+	   </servlet>
+	   <servlet>
+	   	<servlet-name>ProductsController</servlet-name>
+	   	<display-name>ProductsController</display-name>
+	   	<description></description>
+	   	<servlet-class>com.juliett.api.ProductsController.ProductsController</servlet-class>
+	   </servlet>
+	   <servlet>
+	   	<servlet-name>AdminController</servlet-name>
+	   	<display-name>AdminController</display-name>
+	   	<description></description>
+	   	<servlet-class>com.juliett.api.AdminController.AdminController</servlet-class>
+	   </servlet>
+	  
 
     <servlet-mapping>
         <servlet-name>SampleController</servlet-name>
         <url-pattern>/sample/list</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+    	<servlet-name>UsersController</servlet-name>
+    	<url-pattern>/users/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+    	<servlet-name>ProductsProcess</servlet-name>
+    	<url-pattern>/ProductsProcess</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+    	<servlet-name>ProductsController</servlet-name>
+    	<url-pattern>/products/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+    	<servlet-name>AdminController</servlet-name>
+    	<url-pattern>/AdminController</url-pattern>
+    </servlet-mapping>
+  
 	
 	
 </web-app>
