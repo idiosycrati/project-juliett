@@ -48,7 +48,7 @@
 
     <servlet-mapping>
         <servlet-name>SampleController</servlet-name>
-        <url-pattern>/sample/list</url-pattern>
+        <url-pattern>/sample/list</url-pattern> 
     </servlet-mapping>
     <servlet-mapping>
     	<servlet-name>UsersController</servlet-name>
