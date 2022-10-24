@@ -5,15 +5,14 @@
 	version="3.1">
 	<display-name>Archetype Created Web Application</display-name>
 
-	<servlet>
-		<servlet-name>InitServlet</servlet-name>
-		<servlet-class>com.juliett.commons.init.InitServlet</servlet-class>
-		<init-param>
-			<param-name>init-property-file</param-name>
-			<param-value>WEB-INF/configs/project-juliett-local.properties</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+	<context-param>
+		<param-name>init-property-file</param-name>
+		<param-value>/WEB-INF/classes/project-juliett-local.properties</param-value>
+	</context-param>
+	<listener>
+		<listener-class>com.juliett.commons.init.InitListener</listener-class>
+	</listener>
+
 
 	<servlet>
 		<servlet-name>SampleController</servlet-name>
