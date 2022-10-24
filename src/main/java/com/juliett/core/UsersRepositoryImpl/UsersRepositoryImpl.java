@@ -31,42 +31,41 @@ public class UsersRepositoryImpl extends AbstractRepositoryImpl<UsersModel> impl
 
 	public Boolean emailIsAlreadyTaken(String input_email) {
 		Connection connection = null;
-		PreparedStatement statement =null;
-		StringBuilder sql = new StringBuilder("Select * from users where email = ?;" );
-		
+		PreparedStatement statement = null;
+		StringBuilder sql = new StringBuilder("Select * from users where email = ?;");
+
 		try {
-			
+
 			connection = getConnection();
 			statement = connection.prepareStatement(sql.toString());
 			statement.setString(1, input_email);
-			
+
 			ResultSet rs = statement.executeQuery();
-			
-			if(rs.next()) {
+
+			if (rs.next()) {
 				return true;
 			}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
-			close(connection,statement);
+		} finally {
+			close(connection, statement);
 		}
-		
-		
+
 		return false;
 	}
+
 	public UsersModel checkUser(UsersModel usersModel) {
 
 		Connection connection = null;
 		PreparedStatement statement = null;
 
-		StringBuilder sql = new StringBuilder("SELECT * from"+ tableName +  "where email= ?;");
+		StringBuilder sql = new StringBuilder("SELECT * from " + tableName + " where email= ?;");
 
 		try {
 
 			connection = getConnection();
 			statement = connection.prepareStatement(sql.toString());
 			statement.setString(1, usersModel.getEmail());
-			
 
 			ResultSet rs = statement.executeQuery();
 
@@ -79,7 +78,7 @@ public class UsersRepositoryImpl extends AbstractRepositoryImpl<UsersModel> impl
 				usersModel.setAddress(rs.getString("address"));
 				usersModel.setDateOfBirth(rs.getString("date_of_birth"));
 				usersModel.setIsAdmin(rs.getBoolean("is_admin"));
-				
+
 				return usersModel;
 			}
 
@@ -90,6 +89,36 @@ public class UsersRepositoryImpl extends AbstractRepositoryImpl<UsersModel> impl
 		}
 
 		return null;
+
+	}
+
+	public Boolean findAccountByToken(String token) {
+
+		Connection connection = null;
+		PreparedStatement statement = null;
+
+		StringBuilder sql = new StringBuilder("SELECT * from " + tableName + " where tokens= ?;");
+
+		try {
+
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+			statement.setString(1, token);
+
+			ResultSet rs = statement.executeQuery();
+
+			if (rs.next()) {
+
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(connection, statement);
+		}
+
+		return false ;
 
 	}
 
@@ -111,6 +140,7 @@ public class UsersRepositoryImpl extends AbstractRepositoryImpl<UsersModel> impl
 			statement.executeUpdate();
 		} catch (Exception e) {
 			error(e.getMessage());
+			System.out.println(e.getMessage());
 		} finally {
 
 			close(connection, statement);

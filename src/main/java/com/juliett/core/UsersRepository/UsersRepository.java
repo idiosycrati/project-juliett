@@ -12,6 +12,9 @@ public interface UsersRepository extends AbstractRepository<UsersModel> {
 	UsersModel checkUser(UsersModel inputUser);
 
 	void updateToken(UsersModel usersModel);
+
 	Boolean emailIsAlreadyTaken(String input_email);
+
+	Boolean findAccountByToken(String token );
 
 }

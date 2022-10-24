@@ -8,5 +8,8 @@ public interface UsersService extends AbstractService<UsersModel> {
 	UsersModel checkUser(UsersModel inputUser);
 
 	void updateToken(UsersModel usersModel);
+
 	Boolean isEmailAlreadyTaken(String input_email);
+
+	Boolean findUserByToken(String token);
 }

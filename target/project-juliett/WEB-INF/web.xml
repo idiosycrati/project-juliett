@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-	version="3.1">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
 	<display-name>Archetype Created Web Application</display-name>
 
 	<servlet>
@@ -23,38 +20,38 @@
 	<servlet>
 		<servlet-name>UsersController</servlet-name>
 
-
+		
 		<servlet-class>com.juliett.api.UsersController.UsersController</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>ProductsProcess</servlet-name>
-
-
+		
+		
 		<servlet-class>com.juliett.api.ProductsProcess.ProductsProcess</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>ProductsController</servlet-name>
-
-
+		
+		
 		<servlet-class>com.juliett.api.ProductsController.ProductsController</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>AdminController</servlet-name>
-
-
+	
+		
 		<servlet-class>com.juliett.api.AdminController.AdminController</servlet-class>
 	</servlet>
 
-	<servlet-mapping>
-		<servlet-name>SampleController</servlet-name>
-		<url-pattern>/sample</url-pattern>
-	</servlet-mapping>
 
+	
 	<servlet-mapping>
 		<servlet-name>UsersController</servlet-name>
 		<url-pattern>/users/*</url-pattern>
 	</servlet-mapping>
-
+	<servlet-mapping>
+		<servlet-name>ProductsProcess</servlet-name>
+		<url-pattern>/ProductsProcess</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ProductsController</servlet-name>
 		<url-pattern>/products/*</url-pattern>
@@ -62,14 +59,13 @@
 	<servlet-mapping>
 		<servlet-name>AdminController</servlet-name>
 		<url-pattern>/AdminController</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping>	
 	<filter>
 		<filter-name>AuthenticationFilter</filter-name>
 		<filter-class>com.juliett.api.commons.FIlters.AuthenticationFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>AuthenticationFilter</filter-name>
-		<servlet-name>SampleController</servlet-name>
 		<servlet-name>UsersController</servlet-name>
 	</filter-mapping>
 

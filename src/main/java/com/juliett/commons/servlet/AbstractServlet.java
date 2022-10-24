@@ -81,6 +81,9 @@ public class AbstractServlet extends HttpServlet {
 		if (productsService == null) {
 			productsService = new ProductsServiceImpl(databaseManager);
 		}
+		System.out.println("sample checking " + (sampleService == null) + "users checking " + (usersService == null)
+				+ "products checking " + (productsService == null));
+		
 
 	}
 

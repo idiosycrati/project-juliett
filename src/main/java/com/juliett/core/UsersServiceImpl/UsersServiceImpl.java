@@ -37,4 +37,10 @@ public class UsersServiceImpl extends AbstractServiceImpl<UsersModel> implements
 		return this.usersRepository.emailIsAlreadyTaken(input_email);
 	}
 
+	@Override
+	public Boolean findUserByToken(String token) {
+		// TODO Auto-generated method stub
+		return this.usersRepository.findAccountByToken(token);
+	}
+
 }
