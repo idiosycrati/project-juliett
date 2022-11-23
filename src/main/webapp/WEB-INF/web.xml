@@ -7,7 +7,7 @@
 
 	<context-param>
 		<param-name>init-property-file</param-name>
-		<param-value>/WEB-INF/classes/project-juliett-local.properties</param-value>
+		<param-value>/WEB-INF/configs/project-juliett-local.properties</param-value>
 	</context-param>
 	<listener>
 		<listener-class>com.juliett.commons.init.InitListener</listener-class>
@@ -25,12 +25,7 @@
 
 		<servlet-class>com.juliett.api.UsersController.UsersController</servlet-class>
 	</servlet>
-	<servlet>
-		<servlet-name>ProductsProcess</servlet-name>
 
-
-		<servlet-class>com.juliett.api.ProductsProcess.ProductsProcess</servlet-class>
-	</servlet>
 	<servlet>
 		<servlet-name>ProductsController</servlet-name>
 
@@ -40,10 +35,70 @@
 	<servlet>
 		<servlet-name>AdminController</servlet-name>
 
-
 		<servlet-class>com.juliett.api.AdminController.AdminController</servlet-class>
 	</servlet>
 
+
+	<servlet>
+		<servlet-name>FinanceEntityController</servlet-name>
+
+		<servlet-class>com.juliett.api.FinanceEntityController.FinanceEntityController</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>InsuranceEntityController</servlet-name>
+		<servlet-class>com.juliett.api.InsuranceEntityController.InsuranceEntityController</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>PolicyController</servlet-name>
+		<servlet-class>com.juliett.api.PolicyController.PolicyController</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>InsuranceTypeController</servlet-name>
+		<servlet-class>com.juliett.api.InsuranceTypeController.InsuranceTypeController</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>ApplicationFormController</servlet-name>
+		<servlet-class>com.juliett.api.ApplicationFormController.ApplicationFormController</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>TransactionsController</servlet-name>
+		<servlet-class>com.juliett.api.TransactionsController.TransactionsController</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>PaymentController</servlet-name>
+		<servlet-class>com.juliett.api.PaymentController.PaymentController</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>IncidentReportController</servlet-name>
+		<servlet-class>com.juliett.api.IncidentReportController.IncidentReportController</servlet-class>
+	</servlet>
+
+
+	<servlet-mapping>
+		<servlet-name>PolicyController</servlet-name>
+		<url-pattern>/policy</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>PaymentController</servlet-name>
+		<url-pattern>/payment/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TransactionsController</servlet-name>
+		<url-pattern>/transactions/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ApplicationFormController</servlet-name>
+		<url-pattern>/application/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>InsuranceTypeController</servlet-name>
+		<url-pattern>/insuranceType/*</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>SampleController</servlet-name>
 		<url-pattern>/sample</url-pattern>
@@ -60,7 +115,19 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AdminController</servlet-name>
-		<url-pattern>/AdminController</url-pattern>
+		<url-pattern>/admin/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FinanceEntityController</servlet-name>
+		<url-pattern>/finance/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>InsuranceEntityController</servlet-name>
+		<url-pattern>/insurance/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>IncidentReportController</servlet-name>
+		<url-pattern>/incident/*</url-pattern>
 	</servlet-mapping>
 	<filter>
 		<filter-name>AuthenticationFilter</filter-name>
@@ -70,6 +137,14 @@
 		<filter-name>AuthenticationFilter</filter-name>
 		<servlet-name>SampleController</servlet-name>
 		<servlet-name>UsersController</servlet-name>
+		<servlet-name>AdminController</servlet-name>
+		<servlet-name>InsuranceEntityController</servlet-name>
+		<servlet-name>FinanceEntityController</servlet-name>
+		<servlet-name>PolicyController</servlet-name>
+		<servlet-name>ApplicationFormController</servlet-name>
+		<servlet-name>TransactionsController</servlet-name>
+		<servlet-name>PaymentController</servlet-name>
+		<servlet-name>IncidentReportController</servlet-name>
 	</filter-mapping>
 
 </web-app>

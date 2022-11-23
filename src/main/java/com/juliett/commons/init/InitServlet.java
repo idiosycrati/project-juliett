@@ -17,25 +17,26 @@ import com.xurpas.development.core.commons.ProjectProperties;
 @WebServlet("/InitServlet")
 public class InitServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public InitServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public InitServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * @see Servlet#init(ServletConfig)
 	 */
 	public void init(ServletConfig config) throws ServletException {
 		// TODO Auto-generated method stub
-		String propertyFile = (String) config.getInitParameter("init-property-file");
-    	System.out.println("propertyFile=" + propertyFile);
-    	ProjectProperties.initialize(config.getServletContext().getResourceAsStream(propertyFile));
-    	AbstractServlet.getInstance();
-	}
 
+		String propertyFile = (String) config.getInitParameter("init-property-file");
+		System.out.println("propertyFile=" + propertyFile);
+		ProjectProperties.initialize(config.getServletContext().getResourceAsStream(propertyFile));
+		AbstractServlet.getInstance();
+
+	}
 
 }

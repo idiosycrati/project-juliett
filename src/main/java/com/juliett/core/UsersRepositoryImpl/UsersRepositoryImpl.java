@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +19,9 @@ import com.xurpas.development.core.repository.impl.AbstractRepositoryImpl;
 
 public class UsersRepositoryImpl extends AbstractRepositoryImpl<UsersModel> implements UsersRepository {
 	private String tableName;
+	private UsersModel usersModel;
+	Connection connection = null;
+	PreparedStatement statement = null;
 
 	/**
 	 * @param databaseManager
@@ -29,9 +33,9 @@ public class UsersRepositoryImpl extends AbstractRepositoryImpl<UsersModel> impl
 
 	}
 
+	@Override
 	public Boolean emailIsAlreadyTaken(String input_email) {
-		Connection connection = null;
-		PreparedStatement statement = null;
+
 		StringBuilder sql = new StringBuilder("Select * from users where email = ?;");
 
 		try {
@@ -54,10 +58,47 @@ public class UsersRepositoryImpl extends AbstractRepositoryImpl<UsersModel> impl
 		return false;
 	}
 
-	public UsersModel checkUser(UsersModel usersModel) {
+	public Collection<UsersModel> findAccountByToken(String token) {
 
-		Connection connection = null;
-		PreparedStatement statement = null;
+		StringBuilder sql = new StringBuilder("SELECT * from " + tableName + " where tokens= ?");
+
+		List<UsersModel> items = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+			statement.setString(1, token);
+			sql(statement.toString());
+
+			resultSet = statement.executeQuery();
+
+			if (resultSet != null) {
+
+				items = new ArrayList<>();
+				while (resultSet.next()) {
+					UsersModel usersModel = new UsersModel(resultSet.getLong("id"), resultSet.getString("first_name"),
+							resultSet.getString("last_name"), resultSet.getString("email"),
+							resultSet.getString("password"), resultSet.getString("contact"),
+							resultSet.getString("date_of_birth"), resultSet.getString("address"),
+							resultSet.getBoolean("is_admin"));
+					items.add(usersModel);
+					return items;
+
+				}
+			}
+		} catch (Exception e) {
+			error(e.getMessage());
+
+		} finally {
+			close(connection, statement);
+		}
+
+		return null;
+
+	}
+
+	public UsersModel checkUser(UsersModel usersModel) {
 
 		StringBuilder sql = new StringBuilder("SELECT * from " + tableName + " where email= ?;");
 
@@ -92,10 +133,34 @@ public class UsersRepositoryImpl extends AbstractRepositoryImpl<UsersModel> impl
 
 	}
 
-	public Boolean findAccountByToken(String token) {
+	public Boolean isAdmin(String token) {
 
-		Connection connection = null;
-		PreparedStatement statement = null;
+		StringBuilder sql = new StringBuilder("SELECT * from " + tableName + " where tokens= ?;");
+
+		try {
+
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+			statement.setString(1, token);
+
+			ResultSet rs = statement.executeQuery();
+
+			if (rs.next()) {
+				Boolean isAdmin = rs.getBoolean("is_admin");
+				return isAdmin;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(connection, statement);
+		}
+
+		return false;
+
+	}
+
+	public Boolean foundAccount(String token) {
 
 		StringBuilder sql = new StringBuilder("SELECT * from " + tableName + " where tokens= ?;");
 
@@ -118,11 +183,50 @@ public class UsersRepositoryImpl extends AbstractRepositoryImpl<UsersModel> impl
 			close(connection, statement);
 		}
 
-		return false ;
+		return false;
 
 	}
 
-	@Override
+//	public UsersModel findAccountById(Integer id) {
+//
+//		Connection connection = null;
+//		PreparedStatement statement = null;
+//
+//		StringBuilder sql = new StringBuilder("Select * from " + tableName + " where id= ?;");
+//
+//		try {
+//
+//			connection = getConnection();
+//			statement = connection.prepareStatement(sql.toString());
+//			statement.setInt(1, id);
+//			System.out.println("Running impl");
+//			ResultSet rs = statement.executeQuery();
+//
+//			if (rs.next()) {
+//
+//				usersModel = null;
+//
+//				usersModel.setFirstName(rs.getString("first_name"));
+//				usersModel.setLastName(rs.getString("last_name"));
+//				usersModel.setEmail(rs.getString("email"));
+//				usersModel.setDateOfBirth(rs.getString("date_of_birth"));
+//				usersModel.setContact(rs.getString("contact"));
+//				usersModel.setAddress(rs.getString("address"));
+//				usersModel.setIsAdmin(rs.getBoolean("is_admin"));
+//				usersModel.setTokens(rs.getString("tokens"));
+//
+//				return usersModel;
+//
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			close(connection, statement);
+//		}
+//
+//		return null;
+//	}
+
 	public void updateToken(UsersModel usersModel) {
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -137,6 +241,104 @@ public class UsersRepositoryImpl extends AbstractRepositoryImpl<UsersModel> impl
 			statement.setLong(2, usersModel.getId());
 			sql(statement.toString());
 
+			statement.executeUpdate();
+		} catch (Exception e) {
+			error(e.getMessage());
+			System.out.println(e.getMessage());
+		} finally {
+
+			close(connection, statement);
+		}
+
+	}
+
+	public Collection<UsersModel> findUserById(Integer id) {
+
+		Connection connection = null;
+		PreparedStatement statement = null;
+		List<UsersModel> items = null;
+		ResultSet resultSet = null;
+
+		StringBuilder sql = new StringBuilder("select * from " + this.tableName + " where id=?;");
+
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+			statement.setInt(1, id);
+			sql(statement.toString());
+
+			resultSet = statement.executeQuery();
+
+			if (resultSet != null) {
+
+				items = new ArrayList<>();
+				while (resultSet.next()) {
+					UsersModel usersModel = new UsersModel(resultSet.getLong("id"), resultSet.getString("first_name"),
+							resultSet.getString("last_name"), resultSet.getString("email"),
+							resultSet.getString("password"), resultSet.getString("contact"),
+							resultSet.getString("date_of_birth"), resultSet.getString("address"),
+							resultSet.getBoolean("is_admin"));
+					items.add(usersModel);
+					return items;
+
+				}
+			}
+		} catch (Exception e) {
+			error(e.getMessage());
+
+		} finally {
+			close(connection, statement);
+		}
+
+		return null;
+
+	}
+
+	public void updateUsers(UsersModel usersModel) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+
+		StringBuilder sql = new StringBuilder("update " + this.tableName
+				+ " set first_name = coalesce(?, first_name),  last_name = coalesce(?, last_name),  password = coalesce(?, password),  contact = coalesce(?, contact) ,"
+				+ "  address = coalesce(?, address) where tokens = ?");
+
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+
+			statement.setString(1, usersModel.getFirstName());
+			statement.setString(2, usersModel.getLastName());
+			statement.setString(3, usersModel.getPassword());
+			statement.setString(4, usersModel.getContact());
+			statement.setString(5, usersModel.getAddress());
+			statement.setString(6, usersModel.getTokens());
+			sql(statement.toString());
+
+			statement.executeUpdate();
+
+		} catch (Exception e) {
+			error(e.getMessage());
+			System.out.println(e.getMessage());
+
+		} finally {
+			close(connection, statement);
+		}
+	}
+
+	public void updateIsAdmin(UsersModel usersModel) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+
+		StringBuilder sql = new StringBuilder("update " + this.tableName + " set is_admin = ? where id = ?");
+
+		try {
+
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+
+			statement.setBoolean(1, usersModel.getIsAdmin());
+			statement.setLong(2, usersModel.getId());
+			sql(statement.toString());
 			statement.executeUpdate();
 		} catch (Exception e) {
 			error(e.getMessage());

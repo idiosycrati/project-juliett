@@ -1,5 +1,6 @@
 package com.juliett.core.SampleRepositoryImpl;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.juliett.core.Sample.model.SampleModel;
 import com.juliett.core.SampleRepository.SampleRepository;
 import com.xurpas.development.core.db.DatabaseManager;
@@ -23,54 +24,58 @@ import static java.util.Objects.nonNull;
 public class SampleRepositoryImpl extends AbstractRepositoryImpl<SampleModel> implements SampleRepository {
 	private String tableName;
 
-    /**
-     * @param databaseManager
-     */
-    public SampleRepositoryImpl(DatabaseManager databaseManager) {
-        super(SampleModel.class, databaseManager);
-        this.tableName = "sample_table";
+	/**
+	 * @param databaseManager
+	 */
+	public SampleRepositoryImpl(DatabaseManager databaseManager) {
+		super(SampleModel.class, databaseManager);
+		this.tableName = "sample_table";
 
-    }
-    
-    @Override
-    public Collection<SampleModel> list() throws ClassNotFoundException, SQLException, NamingException {
-    	// TODO Auto-generated method stub
-    	
-    	 Connection connection = null;
-         PreparedStatement statement = null;
-         List<SampleModel> items = null;
-         ResultSet resultSet = null;
+	}
 
-         StringBuilder sql = new StringBuilder("select * from "+this.tableName);
-     
+	@Override
+	public Collection<SampleModel> list() throws ClassNotFoundException, SQLException, NamingException {
+		// TODO Auto-generated method stub
 
-         try {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		List<SampleModel> items = null;
+		ResultSet resultSet = null;
+		String obj;
+		StringBuilder sql = new StringBuilder("select * from " + this.tableName);
 
-             connection = getConnection();
-             statement  = connection.prepareStatement(sql.toString());
-             sql(statement.toString());
+		try {
 
-             resultSet = statement.executeQuery();
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+			sql(statement.toString());
 
-             if (resultSet != null) {
-                 items = new ArrayList<>();
-                 while (resultSet.next()) {
-                	 SampleModel sampleModel = new SampleModel(resultSet.getLong("id"));
-                	 sampleModel.setDescription(resultSet.getString("description"));
-                     items.add(sampleModel);
+			resultSet = statement.executeQuery();
 
-                 }
+			if (resultSet != null) {
+				items = new ArrayList<>();
+				while (resultSet.next()) {
 
-             }
+					SampleModel sampleModel = new SampleModel(resultSet.getLong("id"));
+					sampleModel.setDescription(resultSet.getString("description"));
 
-         } catch (Exception e) {
-             error(e.getMessage());
-         } finally {
-             close(connection, statement);
-         }
+					System.out.println(resultSet.getObject("application_form"));
+					System.out.println();
 
-         return items;
-    
-    }
-   
+					items.add(sampleModel);
+
+				}
+
+			}
+
+		} catch (Exception e) {
+			error(e.getMessage());
+		} finally {
+			close(connection, statement);
+		}
+
+		return items;
+
+	}
+
 }

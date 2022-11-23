@@ -9,7 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.annotation.WebServlet;
+//import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,47 +21,30 @@ import com.juliett.core.UsersService.UsersService;
 import com.xurpas.development.core.logger.Logger;
 
 @WebFilter()
-public class AuthenticationFilter implements Filter {
-	
+public class AuthenticationFilter extends AbstractProcess implements Filter {
+
 	private UsersService usersService;
-//	final Logger logger;
-	
+	final Logger logger;
+
 	public AuthenticationFilter() {
-		
-//		this.logger = AbstractServlet.getLogger();
-		System.out.println((AbstractServlet.getUsersService()==null) +" service is null");
-		System.out.println("filter logger " + AbstractServlet.getUsersService() );
-		
-//		
-	}
+		super(AbstractServlet.getLogger());
+		this.usersService = AbstractServlet.getUsersService();
+		this.logger = AbstractServlet.getLogger();
 	
-	public String getToken(HttpServletRequest request) {
-		System.out.println("Getting token");
-		String authorizationHeader = request.getHeader("Authorization");
-//		logger.debug("authorizationHeader : " + authorizationHeader);
-		System.out.println(authorizationHeader);
-		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-//			logger.error(authorizationHeader + "error Atuhorization");
-			return null;
-		}
 
-//		logger.debug("token: " + authorizationHeader);
-
-		String bearerToken = authorizationHeader.substring(7);
-
-		return bearerToken;
+//		
 	}
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		
+
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
 
@@ -69,32 +52,38 @@ public class AuthenticationFilter implements Filter {
 				&& !req.getRequestURI().substring(req.getContextPath().length()).equals("/users/login")) {
 
 			try {
-				System.out.println("Filter is running");
+
 				final String token = getToken(req);
-				System.out.println(token);
-				System.out.println();
+
 				if (token == null) {
 
-					res.getWriter().append("token is nullr");
-					System.out.println("null");
+					sendError(res, ResponseCode.BAD_REQUEST, "Token is null");
+
 					return;
 				}
-				Boolean foundUser = usersService.findUserByToken(token);
+				Boolean foundUser = usersService.foundAccount(token);
+				System.out.println(foundUser);
 				if (foundUser) {
 
 					request.setAttribute("tokenInput", token);
 					chain.doFilter(request, response);
+
 				}
-				
+				if (!foundUser) {
+
+					sendResponse(res, ResponseCode.UNAUTHORIZED, "Invalid token :>");
+
+				}
+
 				return;
 			} catch (Throwable e) {
-				System.out.println("Internal error");
-			System.out.println(e.getMessage());
+
+				System.out.println(e.getMessage());
 				res.setStatus(500);
-				res.getWriter().append("Internal server error");
+				sendError(res, ResponseCode.INTERNAL_SERVER_ERROR, "Internal server error");
 			}
-		}else {
-		chain.doFilter(request, response);
+		} else {
+			chain.doFilter(request, response);
 		}
 		// TODO Auto-generated method stub
 

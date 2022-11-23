@@ -30,19 +30,10 @@ public class UsersProcess extends AbstractProcess {
 		this.usersService = usersService;
 		// TODO Auto-generated constructor stub
 	}
+	
 
 	public void getMethod(HttpServletRequest request, HttpServletResponse response) {
-
-		try {
-			sendResponse(response, ResponseCode.OK, usersService.list());
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XDevServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 
 	}
 
@@ -56,16 +47,54 @@ public class UsersProcess extends AbstractProcess {
 			register(request, response);
 			return;
 		default:
-			response.sendRedirect("/not-found");
+			response.sendRedirect("/project-juliett");
 			return;
 		}
 	}
 
 	public void patchMethod(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String subpathEndpoint = request.getPathInfo();
+		switch (subpathEndpoint.substring(1)) {
+		case "updateInfo":
+			updateInfo(request, response);
+			return;
+
+		default:
+			response.sendRedirect("/project-juliett");
+			return;
+		}
 
 	}
 
 	@SuppressWarnings("unused")
+
+	private void updateInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		String token = request.getAttribute("tokenInput").toString();
+		UsersModelDTO inputUser;
+		UsersModel updateUser;
+		inputUser = Util.deserialize(request, UsersModelDTO.class);
+
+		try {
+
+			updateUser = new UsersModel();
+			updateUser.setFirstName(inputUser.getFirstName());
+			updateUser.setLastName(inputUser.getLastName());
+			updateUser.setPassword(DigestUtils.sha256Hex(inputUser.getPassword()));
+			updateUser.setContact(inputUser.getContact());
+			updateUser.setAddress(inputUser.getAddress());
+			updateUser.setTokens(token);
+			System.out.println();
+			usersService.updateUsers(updateUser);
+			sendResponse(response, ResponseCode.ACCEPTED, usersService.findAccountByToken(token));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+
+	}
+
 	private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		// Parse Request
@@ -80,14 +109,13 @@ public class UsersProcess extends AbstractProcess {
 
 			inputUser = Util.deserialize(request, UsersModelDTO.class);
 
-			System.out.println(uuidAsString);
 			usersModel = new UsersModel();
 			usersModel.setEmail(inputUser.getEmail());
 			logger.debug(inputUser);
 			usersModel = usersService.checkUser(usersModel);
 			String inputPassword = DigestUtils.sha256Hex(inputUser.getPassword());
 			String dbPassword = usersModel.getPassword();
-			System.out.println("input password is " + inputPassword + " db password is " + dbPassword);
+
 			if (inputPassword.equals(dbPassword)) {
 				usersModel.setTokens(uuidAsString);
 				usersService.updateToken(usersModel);

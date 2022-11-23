@@ -67,7 +67,7 @@ public class UsersController extends AbstractServlet implements Servlet {
 	protected void doPatch(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		super.doPatch(request, response);
+		usersProcess.patchMethod(request, response);
 	}
 
 }

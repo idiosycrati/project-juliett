@@ -1,6 +1,7 @@
 package com.juliett.core.UsersRepository;
 
 import java.sql.SQLException;
+import java.util.Collection;
 
 import javax.naming.NamingException;
 
@@ -15,6 +16,15 @@ public interface UsersRepository extends AbstractRepository<UsersModel> {
 
 	Boolean emailIsAlreadyTaken(String input_email);
 
-	Boolean findAccountByToken(String token );
+	Boolean foundAccount(String token);
 
+	Boolean isAdmin(String token);
+
+	Collection<UsersModel> findUserById(Integer id);
+
+	void updateIsAdmin(UsersModel usersModel);
+
+	void updateUsers(UsersModel usersModel);
+
+	Collection<UsersModel> findAccountByToken(String token);
 }

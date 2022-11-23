@@ -17,6 +17,10 @@ public class SampleModel extends AbstractEntity {
     
     private Long id;
     private String description;
+    private String fullName;
+    private String lastName;
+    private String contact;
+    private String item;
     
 
 
@@ -26,6 +30,46 @@ public class SampleModel extends AbstractEntity {
     	this.id=id;
 
 }
+
+
+	public String getFullName() {
+		return fullName;
+	}
+
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
+
+	public String getLastName() {
+		return lastName;
+	}
+
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+
+	public String getContact() {
+		return contact;
+	}
+
+
+	public void setContact(String contact) {
+		this.contact = contact;
+	}
+
+
+	public String getItem() {
+		return item;
+	}
+
+
+	public void setItem(String item) {
+		this.item = item;
+	}
 
 
 	public Long getId() {

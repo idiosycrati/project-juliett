@@ -57,7 +57,7 @@ public class AbstractProcess {
 			logger.writeLog(formatResponseLog(responseCode));
 		} else if ("String".equals(body.getClass().getSimpleName())) {
 			out.append(Util.serialize(new XBlastResponse(responseCode, body.toString())));
-			System.out.println("testing logger "+logger==null);
+			System.out.println("testing logger " + logger == null);
 			logger.writeLog(formatResponseLog(responseCode));
 		} else {
 			int writeLogLengthLimit = 150;
@@ -145,10 +145,10 @@ public class AbstractProcess {
 	}
 
 	public String getToken(HttpServletRequest request) {
-		System.out.println("Getting token");
+
 		String authorizationHeader = request.getHeader("Authorization");
 		logger.debug("authorizationHeader : " + authorizationHeader);
-		System.out.println(authorizationHeader);
+
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
 			error(authorizationHeader, "Invalid Authorization Header");
 			return null;
@@ -171,7 +171,7 @@ public class AbstractProcess {
 		logger.debug("token: " + authorizationHeader);
 		System.out.println(authorizationHeader);
 		String bearerToken = authorizationHeader.substring(7);
-		
+
 		return bearerToken;
 	}
 

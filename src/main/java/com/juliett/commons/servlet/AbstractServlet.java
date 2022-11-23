@@ -8,12 +8,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.httpclient.HttpStatus;
-
+import com.juliett.core.InsuranceEntityServiceImpl.InsuranceEntityServiceImpl;
+import com.juliett.core.InsuranceTypeService.InsuranceTypeService;
+import com.juliett.core.InsuranceTypeServiceImpl.InsuranceTypeServiceImpl;
+import com.juliett.core.PaymentService.PaymentService;
+import com.juliett.core.PaymentServiceImpl.PaymentServiceImpl;
+import com.juliett.core.PolicyService.PolicyService;
+import com.juliett.core.PolicyServiceImpl.PolicyServiceImpl;
+import com.juliett.core.ApplicationFormService.ApplicationFormService;
+import com.juliett.core.ApplicationFormServiceImpl.ApplicationFormServiceImpl;
+import com.juliett.core.FinanceEntityService.FinanceEntityService;
+import com.juliett.core.FinanceEntityServiceImpl.FinanceEntityServiceImpl;
+import com.juliett.core.IncidentReportService.IncidentReportService;
+import com.juliett.core.IncidentReportServiceImpl.IncidentReportServiceImpl;
+import com.juliett.core.InsuranceEntityService.InsuranceEntityService;
 import com.juliett.core.ProductsService.ProductsService;
 import com.juliett.core.ProductsServiceImpl.ProductsServiceImpl;
 import com.juliett.core.SampleService.SampleService;
 import com.juliett.core.SampleServiceImpl.SampleServiceImpl;
+import com.juliett.core.TransactionsService.TransactionsService;
+import com.juliett.core.TransactionsServiceImpl.TransactionsServiceImpl;
 import com.juliett.core.UsersService.UsersService;
 import com.juliett.core.UsersServiceImpl.UsersServiceImpl;
 import com.xurpas.development.core.commons.ProjectProperties;
@@ -39,6 +53,14 @@ public class AbstractServlet extends HttpServlet {
 	private static SampleService sampleService;
 	private static UsersService usersService;
 	private static ProductsService productsService;
+	private static InsuranceEntityService insuranceEntityService;
+	private static FinanceEntityService financeEntityService;
+	private static PolicyService policyService;
+	private static InsuranceTypeService insuranceTypeService;
+	private static ApplicationFormService applicationFormService;
+	private static TransactionsService transactionsService;
+	private static PaymentService paymentService;
+	private static IncidentReportService incidentReportService;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -81,9 +103,37 @@ public class AbstractServlet extends HttpServlet {
 		if (productsService == null) {
 			productsService = new ProductsServiceImpl(databaseManager);
 		}
-		System.out.println("sample checking " + (sampleService == null) + "users checking " + (usersService == null)
-				+ "products checking " + (productsService == null));
-		
+		if (insuranceEntityService == null) {
+
+			insuranceEntityService = new InsuranceEntityServiceImpl(databaseManager);
+		}
+
+		if (financeEntityService == null) {
+
+			financeEntityService = new FinanceEntityServiceImpl(databaseManager);
+		}
+		if (policyService == null) {
+			policyService = new PolicyServiceImpl(databaseManager);
+		}
+
+		if (insuranceTypeService == null) {
+
+			insuranceTypeService = new InsuranceTypeServiceImpl(databaseManager);
+		}
+
+		if (applicationFormService == null) {
+
+			applicationFormService = new ApplicationFormServiceImpl(databaseManager);
+		}
+		if (transactionsService == null) {
+			transactionsService = new TransactionsServiceImpl(databaseManager);
+		}
+		if (paymentService == null) {
+			paymentService = new PaymentServiceImpl(databaseManager);
+		}
+		if (incidentReportService == null) {
+			incidentReportService = new IncidentReportServiceImpl(databaseManager);
+		}
 
 	}
 
@@ -150,5 +200,70 @@ public class AbstractServlet extends HttpServlet {
 	public static void setSampleService(SampleService sampleService) {
 		AbstractServlet.sampleService = sampleService;
 	}
+
+	public static InsuranceEntityService getInsuranceEntityService() {
+		return insuranceEntityService;
+	}
+
+	public static void setInsuranceEntityService(InsuranceEntityService insuranceEntityService) {
+		AbstractServlet.insuranceEntityService = insuranceEntityService;
+	}
+
+	public static FinanceEntityService getFinanceEntityService() {
+		return financeEntityService;
+	}
+
+	public static void setFinanceEntityService(FinanceEntityService financeEntityService) {
+		AbstractServlet.financeEntityService = financeEntityService;
+	}
+
+	public static PolicyService getPolicyService() {
+		return policyService;
+	}
+
+	public static void setPolicyService(PolicyService policyService) {
+		AbstractServlet.policyService = policyService;
+	}
+
+	public static InsuranceTypeService getInsuranceTypeService() {
+		return insuranceTypeService;
+	}
+
+	public static void setInsuranceTypeService(InsuranceTypeService insuranceTypeService) {
+		AbstractServlet.insuranceTypeService = insuranceTypeService;
+	}
+
+	public static ApplicationFormService getApplicationFormService() {
+		return applicationFormService;
+	}
+
+	public static void setApplicationFormService(ApplicationFormService applicationFormService) {
+		AbstractServlet.applicationFormService = applicationFormService;
+	}
+
+	public static TransactionsService getTransactionsService() {
+		return transactionsService;
+	}
+
+	public static void setTransactionsService(TransactionsService transactionsService) {
+		AbstractServlet.transactionsService = transactionsService;
+	}
+
+	public static PaymentService getPaymentService() {
+		return paymentService;
+	}
+
+	public static void setPaymentService(PaymentService paymentService) {
+		AbstractServlet.paymentService = paymentService;
+	}
+
+	public static IncidentReportService getIncidentReportService() {
+		return incidentReportService;
+	}
+
+	public static void setIncidentReportService(IncidentReportService incidentReportService) {
+		AbstractServlet.incidentReportService = incidentReportService;
+	}
+	
 
 }

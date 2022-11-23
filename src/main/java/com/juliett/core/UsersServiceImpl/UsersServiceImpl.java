@@ -1,5 +1,7 @@
 package com.juliett.core.UsersServiceImpl;
 
+import java.util.Collection;
+
 import com.juliett.core.Users.model.UsersModel;
 import com.juliett.core.UsersRepository.UsersRepository;
 import com.juliett.core.UsersRepositoryImpl.UsersRepositoryImpl;
@@ -38,8 +40,29 @@ public class UsersServiceImpl extends AbstractServiceImpl<UsersModel> implements
 	}
 
 	@Override
-	public Boolean findUserByToken(String token) {
+	public Boolean foundAccount(String token) {
 		// TODO Auto-generated method stub
+		return this.usersRepository.foundAccount(token);
+	}
+
+	public Boolean isAdmin(String token) {
+		return this.usersRepository.isAdmin(token);
+	}
+
+	public Collection<UsersModel> findUserById(Integer id) {
+		return this.usersRepository.findUserById(id);
+	}
+
+	public void updateIsAdmin(UsersModel usersModel) {
+		this.usersRepository.updateIsAdmin(usersModel);
+	}
+
+	public void updateUsers(UsersModel usersModel) {
+
+		this.usersRepository.updateUsers(usersModel);
+	}
+
+	public Collection<UsersModel> findAccountByToken(String token) {
 		return this.usersRepository.findAccountByToken(token);
 	}
 

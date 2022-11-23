@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.simple.parser.ParseException;
+
 import com.juliett.api.ProductsProcess.ProductsProcess;
 import com.juliett.commons.servlet.AbstractServlet;
 
@@ -35,7 +37,12 @@ public class ProductsController extends AbstractServlet implements Servlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		productsProcess.getMethod(request,response);
+		try {
+			productsProcess.getMethod(request,response);
+		} catch (IOException | ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
