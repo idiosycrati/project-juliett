@@ -13,10 +13,13 @@ import org.json.simple.parser.ParseException;
 import com.juliett.api.ApplicationFormProcess.ApplicationFormProcess;
 import com.juliett.api.TransactionsProcess.TransactionsProcess;
 import com.juliett.commons.servlet.AbstractServlet;
+import com.juliett.core.ApplicationForm.model.ApplicationFormModel;
+import com.juliett.core.ApplicationFormService.ApplicationFormService;
 import com.juliett.core.FinanceEntity.model.FinanceEntityModel;
 import com.juliett.core.FinanceEntityService.FinanceEntityService;
 import com.juliett.core.Products.model.ProductsModel;
 import com.juliett.core.ProductsService.ProductsService;
+import com.juliett.core.Transactions.model.TransactionsModel;
 import com.juliett.core.TransactionsService.TransactionsService;
 import com.juliett.core.commons.ApiCall.ApiCall;
 import com.xurpas.development.core.logger.Logger;
@@ -29,6 +32,7 @@ public class ThreadSumAssurance extends Thread {
 	private ProductsService productsService;
 	private TransactionsService transactionsService;
 	private FinanceEntityService financeEntityService;
+	private ApplicationFormService applicationFormService;
 
 	public ThreadSumAssurance(TransactionsService transactionsService, FinanceEntityService financeEntityService,
 			Logger logger) {
@@ -45,6 +49,7 @@ public class ThreadSumAssurance extends Thread {
 			Double multiplier = multiplierFinance.get(0).getExchangeRate();
 			transactionsService.updateSumAssurance(multiplier);
 			System.out.println(multiplier);
+			updateClaimAssurance();
 			try {
 
 				Thread.sleep(10000);
@@ -53,5 +58,27 @@ public class ThreadSumAssurance extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void updateClaimAssurance() {
+
+		List<TransactionsModel> transactionsModel = (List<TransactionsModel>) transactionsService.getJsonPolicy();
+		int size = transactionsModel.size();
+		for (int i = 0; i < size; i++) {
+//			String jsonPolicy = transactionsModel.get(i).getJsonPolicy();
+//			Object jo = null;
+//			try {
+//				jo = new JSONParser().parse(jsonPolicy);
+//			} catch (ParseException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//
+//			JSONObject jobject =  (JSONObject) jo;
+//			String incidentString = (String) jobject.get("incidentClaim");
+//			Double incidentClaim = Double.parseDouble(incidentString);
+
+		}
+		transactionsService.updateClaimAssurance(0.3);
 	}
 }

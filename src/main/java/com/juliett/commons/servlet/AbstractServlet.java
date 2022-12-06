@@ -17,6 +17,8 @@ import com.juliett.core.PolicyService.PolicyService;
 import com.juliett.core.PolicyServiceImpl.PolicyServiceImpl;
 import com.juliett.core.ApplicationFormService.ApplicationFormService;
 import com.juliett.core.ApplicationFormServiceImpl.ApplicationFormServiceImpl;
+import com.juliett.core.AutoEmailService.AutoEmailService;
+import com.juliett.core.AutoEmailServiceImpl.AutoEmailServiceImpl;
 import com.juliett.core.FinanceEntityService.FinanceEntityService;
 import com.juliett.core.FinanceEntityServiceImpl.FinanceEntityServiceImpl;
 import com.juliett.core.IncidentReportService.IncidentReportService;
@@ -61,6 +63,7 @@ public class AbstractServlet extends HttpServlet {
 	private static TransactionsService transactionsService;
 	private static PaymentService paymentService;
 	private static IncidentReportService incidentReportService;
+	private static AutoEmailService autoEmailService;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -133,6 +136,9 @@ public class AbstractServlet extends HttpServlet {
 		}
 		if (incidentReportService == null) {
 			incidentReportService = new IncidentReportServiceImpl(databaseManager);
+		}
+		if (autoEmailService == null) {
+			autoEmailService = new AutoEmailServiceImpl(databaseManager);
 		}
 
 	}
@@ -264,6 +270,13 @@ public class AbstractServlet extends HttpServlet {
 	public static void setIncidentReportService(IncidentReportService incidentReportService) {
 		AbstractServlet.incidentReportService = incidentReportService;
 	}
-	
+
+	public static AutoEmailService getAutoEmailService() {
+		return autoEmailService;
+	}
+
+	public static void setAutoEmailService(AutoEmailService autoEmailService) {
+		AbstractServlet.autoEmailService = autoEmailService;
+	}
 
 }

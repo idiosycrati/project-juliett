@@ -43,4 +43,24 @@ public class TransactionsServiceImpl extends AbstractServiceImpl<TransactionsMod
 	public Collection<TransactionsModel> findTransactionsWithClaims() {
 		return this.transactionsRepository.findTransactionsWithClaims();
 	}
+
+	public Collection<TransactionsModel> getJsonPolicy() {
+		return this.transactionsRepository.getJsonPolicy();
+	}
+
+	public void updateClaimAssurance(Double multiplier) {
+		this.transactionsRepository.updateClaimAssurance(multiplier);
+	}
+
+	public Collection<TransactionsModel> findTransactionsTerminated() {
+		return this.transactionsRepository.findTransactionsTerminated();
+	}
+
+	public Collection<TransactionsModel> getUsersName() {
+		return this.transactionsRepository.getUsersName();
+	}
+
+	public Collection<TransactionsModel> getUsersInfo(Long id) {
+		return this.transactionsRepository.getUsersInfo(id);
+	}
 }

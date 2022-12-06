@@ -19,4 +19,14 @@ public interface TransactionsService extends AbstractService<TransactionsModel> 
 
 	public Collection<TransactionsModel> findTransactionsWithClaims();
 
+	public Collection<TransactionsModel> getJsonPolicy();
+
+	public void updateClaimAssurance(Double multiplier);
+
+	public Collection<TransactionsModel> findTransactionsTerminated();
+
+	public Collection<TransactionsModel> getUsersName();
+	
+	public Collection<TransactionsModel> getUsersInfo(Long id);
+
 }

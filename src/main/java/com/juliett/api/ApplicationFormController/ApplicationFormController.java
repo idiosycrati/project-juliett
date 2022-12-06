@@ -30,7 +30,7 @@ public class ApplicationFormController extends AbstractServlet implements Servle
 		super();
 		this.applicationFormProcess = new ApplicationFormProcess(getApplicationFormService(), getUsersService(),
 				getInsuranceTypeService(), getTransactionsService(), getProductsService(), getPolicyService(),
-				getLogger());
+				getAutoEmailService(), getLogger());
 
 		// TODO Auto-generated constructor stub
 	}

@@ -88,11 +88,11 @@ public class InitListener implements ServletContextListener, HttpSessionListener
 					AbstractServlet.getLogger());
 //			threadMultiplier.start();
 		}
-//		if (threadCheckTermination == null) {
-//			threadCheckTermination = new ThreadCheckTermination(AbstractServlet.getTransactionsService(),
-//					AbstractServlet.getLogger());
-//			threadCheckTermination.start();
-//		}
+		if (threadCheckTermination == null) {
+			threadCheckTermination = new ThreadCheckTermination(AbstractServlet.getTransactionsService(),
+					AbstractServlet.getAutoEmailService(), AbstractServlet.getLogger());
+			threadCheckTermination.start();
+		}	
 		if (threadSumAssurance == null) {
 			threadSumAssurance = new ThreadSumAssurance(AbstractServlet.getTransactionsService(),
 					AbstractServlet.getFinanceEntityService(), AbstractServlet.getLogger());
@@ -105,7 +105,7 @@ public class InitListener implements ServletContextListener, HttpSessionListener
 	public void contextDestroyed(ServletContextEvent sce) {
 		// TODO Auto-generated method stub
 		threadMultiplier.stop();
-//		threadCheckTermination.stop();
+		threadCheckTermination.stop();
 		threadSumAssurance.stop();
 
 	}

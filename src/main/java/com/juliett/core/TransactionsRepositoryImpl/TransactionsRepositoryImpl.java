@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 
 import com.juliett.core.Transactions.model.TransactionsModel;
 import com.juliett.core.TransactionsRepository.TransactionsRepository;
+import com.juliett.core.model.enums.Status;
 import com.xurpas.development.core.db.DatabaseManager;
 import com.xurpas.development.core.repository.impl.AbstractRepositoryImpl;
 
@@ -32,7 +33,7 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 	public TransactionsModel insert(TransactionsModel transactionsModel) {
 
 		StringBuilder sql = new StringBuilder("insert into " + this.tableName
-				+ "(application_form_id, subscription_date, total_amount_paid, remaining_balance,subscription_date_end,status,due_date_payment,due_date_termination,currency_coin_qty) VALUES (?,?,?,?,?,?,?,?,?)");
+				+ "(application_form_id, subscription_date, total_amount_paid, remaining_balance,subscription_date_end,status,due_date_payment,due_date_termination,currency_coin_qty,users_id) VALUES (?,?,?,?,?,?,?,?,?,?)");
 
 		try {
 			connection = getConnection();
@@ -42,11 +43,11 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 			statement.setDouble(3, transactionsModel.getTotalAmountPaid());
 			statement.setDouble(4, transactionsModel.getRemainingBalance());
 			statement.setString(5, transactionsModel.getSubscriptionDateEnd());
-			statement.setString(6, transactionsModel.getStatus());
+			statement.setString(6, transactionsModel.getStatus().getTitle());
 			statement.setString(7, transactionsModel.getDueDatePayment());
 			statement.setString(8, transactionsModel.getDueDateTermination());
 			statement.setDouble(9, transactionsModel.getCurrencyCoinQty());
-
+			statement.setLong(9, transactionsModel.getUsersId());
 			sql(statement.toString());
 			statement.executeUpdate();
 			ResultSet genkeys = statement.getGeneratedKeys();
@@ -118,6 +119,60 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 		}
 	}
 
+	public void updateClaimAssurance(Double multiplier) {
+		// TODO Auto-generated method stub
+
+		StringBuilder sql = new StringBuilder(
+				"update " + this.tableName + " set claimable_assurance  = sum_assurance * ? where claims != 0");
+
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+			statement.setDouble(1, multiplier);
+			sql(statement.toString());
+			statement.executeUpdate();
+
+		} catch (Exception e) {
+			error(e.getMessage());
+
+		} finally {
+			close(connection, statement);
+		}
+	}
+
+	public Collection<TransactionsModel> findTransactionsTerminated() {
+		List<TransactionsModel> items = null;
+		ResultSet resultSet = null;
+
+		StringBuilder sql = new StringBuilder("select * from " + this.tableName + " where status = 'terminated'");
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+			sql(statement.toString());
+			resultSet = statement.executeQuery();
+
+			if (resultSet != null) {
+				items = new ArrayList<>();
+				while (resultSet.next()) {
+					TransactionsModel transactionsModel = new TransactionsModel(resultSet.getLong("id"),
+							resultSet.getLong("application_form_id"), resultSet.getDouble("total_amount_paid"),
+							resultSet.getDouble("remaining_balance"), resultSet.getString("subscription_date"),
+							resultSet.getString("subscription_date_end"),
+							Status.findString(resultSet.getString("status")), resultSet.getString("due_date_payment"),
+							resultSet.getString("due_date_termination"), resultSet.getDouble("currency_coin_qty"),
+							resultSet.getDouble("sum_assurance"), resultSet.getInt("claims"),
+							resultSet.getDouble("claimable_assurance"), resultSet.getLong("users_id"));
+					items.add(transactionsModel);
+			
+				}
+			}
+
+		} catch (Exception e) {
+			error(e.getMessage());
+		}
+		return items;
+	}
+
 	public Collection<TransactionsModel> findTransactionByApplicationId(Long applicationId) {
 		ResultSet resultSet = null;
 		List<TransactionsModel> items = null;
@@ -138,12 +193,13 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 					TransactionsModel transactionsModel = new TransactionsModel(resultSet.getLong("id"),
 							resultSet.getLong("application_form_id"), resultSet.getDouble("total_amount_paid"),
 							resultSet.getDouble("remaining_balance"), resultSet.getString("subscription_date"),
-							resultSet.getString("subscription_date_end"), resultSet.getString("status"),
-							resultSet.getString("due_date_payment"), resultSet.getString("due_date_termination"),
-							resultSet.getDouble("currency_coin_qty"), resultSet.getDouble("sum_assurance"),
-							resultSet.getInt("claims"), resultSet.getDouble("claimable_assurance"));
+							resultSet.getString("subscription_date_end"),
+							Status.findString(resultSet.getString("status")), resultSet.getString("due_date_payment"),
+							resultSet.getString("due_date_termination"), resultSet.getDouble("currency_coin_qty"),
+							resultSet.getDouble("sum_assurance"), resultSet.getInt("claims"),
+							resultSet.getDouble("claimable_assurance"));
 					items.add(transactionsModel);
-					return items;
+					
 				}
 			}
 
@@ -174,18 +230,109 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 					TransactionsModel transactionsModel = new TransactionsModel(resultSet.getLong("id"),
 							resultSet.getLong("application_form_id"), resultSet.getDouble("total_amount_paid"),
 							resultSet.getDouble("remaining_balance"), resultSet.getString("subscription_date"),
-							resultSet.getString("subscription_date_end"), resultSet.getString("status"),
-							resultSet.getString("due_date_payment"), resultSet.getString("due_date_termination"),
-							resultSet.getDouble("currency_coin_qty"), resultSet.getDouble("sum_assurance"),
-							resultSet.getInt("claims"), resultSet.getDouble("claimable_assurance"));
+							resultSet.getString("subscription_date_end"),
+							Status.findString(resultSet.getString("status")), resultSet.getString("due_date_payment"),
+							resultSet.getString("due_date_termination"), resultSet.getDouble("currency_coin_qty"),
+							resultSet.getDouble("sum_assurance"), resultSet.getInt("claims"),
+							resultSet.getDouble("claimable_assurance"));
 					items.add(transactionsModel);
-					return items;
+					
 				}
 			}
 
 		} catch (Exception e) {
 			error(e.getMessage());
 
+		}
+		return items;
+	}
+
+	public Collection<TransactionsModel> getUsersName() {
+		List<TransactionsModel> items = null;
+
+		ResultSet resultSet = null;
+
+		StringBuilder sql = new StringBuilder(
+				"select u.first_name, u.last_name, u.email from transactions as  t inner join public.users  as u on t.users_id  = u.id ;");
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+			sql(statement.toString());
+			resultSet = statement.executeQuery();
+			if (resultSet != null) {
+				items = new ArrayList<>();
+				while (resultSet.next()) {
+					TransactionsModel transactionsModel = new TransactionsModel(resultSet.getString("first_name"),
+							resultSet.getString("last_name"), resultSet.getString("email"));
+					items.add(transactionsModel);
+					
+				}
+			}
+
+		} catch (Exception e) {
+			error(e.getMessage());
+		} finally {
+			close(connection, statement);
+		}
+		return items;
+	}
+
+	public Collection<TransactionsModel> getUsersInfo(Long id) {
+		List<TransactionsModel> items = null;
+
+		ResultSet resultSet = null;
+
+		StringBuilder sql = new StringBuilder(
+				"select u.first_name, u.last_name, u.email from transactions as t inner join public.users as u on t.users_id  = u.id where t.id = ?");
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+			statement.setLong(1, id);
+			sql(statement.toString());
+			resultSet = statement.executeQuery();
+			if (resultSet != null) {
+				items = new ArrayList<>();
+				while (resultSet.next()) {
+					TransactionsModel transactionsModel = new TransactionsModel(resultSet.getString("first_name"),
+							resultSet.getString("last_name"), resultSet.getString("email"));
+					items.add(transactionsModel);
+				
+				}
+			}
+
+		} catch (Exception e) {
+			error(e.getMessage());
+		} finally {
+			close(connection, statement);
+		}
+		return items;
+	}
+
+	public Collection<TransactionsModel> getJsonPolicy() {
+		List<TransactionsModel> items = null;
+
+		ResultSet resultSet = null;
+		StringBuilder sql = new StringBuilder("select p.json_policy from " + this.tableName
+				+ " as  t inner join public.policy as p on t.plans_category = p.plans_category where t.claims  !=0");
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+			sql(statement.toString());
+
+			resultSet = statement.executeQuery();
+
+			if (resultSet != null) {
+				items = new ArrayList<>();
+				while (resultSet.next()) {
+					TransactionsModel transactionsModel = new TransactionsModel(resultSet.getString("json_policy"));
+					items.add(transactionsModel);
+				}
+			}
+		} catch (Exception e) {
+
+			error(e.getMessage());
+		} finally {
+			close(connection, statement);
 		}
 		return items;
 	}
@@ -210,12 +357,13 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 					TransactionsModel transactionsModel = new TransactionsModel(resultSet.getLong("id"),
 							resultSet.getLong("application_form_id"), resultSet.getDouble("total_amount_paid"),
 							resultSet.getDouble("remaining_balance"), resultSet.getString("subscription_date"),
-							resultSet.getString("subscription_date_end"), resultSet.getString("status"),
-							resultSet.getString("due_date_payment"), resultSet.getString("due_date_termination"),
-							resultSet.getDouble("currency_coin_qty"), resultSet.getDouble("sum_assurance"),
-							resultSet.getInt("claims"), resultSet.getDouble("claimable_assurance"));
+							resultSet.getString("subscription_date_end"),
+							Status.findString(resultSet.getString("status")), resultSet.getString("due_date_payment"),
+							resultSet.getString("due_date_termination"), resultSet.getDouble("currency_coin_qty"),
+							resultSet.getDouble("sum_assurance"), resultSet.getInt("claims"),
+							resultSet.getDouble("claimable_assurance"), resultSet.getLong("users_id"));
 					items.add(transactionsModel);
-					return items;
+					
 				}
 			}
 
@@ -245,12 +393,13 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 					TransactionsModel transactionsModel = new TransactionsModel(resultSet.getLong("id"),
 							resultSet.getLong("application_form_id"), resultSet.getDouble("total_amount_paid"),
 							resultSet.getDouble("remaining_balance"), resultSet.getString("subscription_date"),
-							resultSet.getString("subscription_date_end"), resultSet.getString("status"),
-							resultSet.getString("due_date_payment"), resultSet.getString("due_date_termination"),
-							resultSet.getDouble("currency_coin_qty"), resultSet.getDouble("sum_assurance"),
-							resultSet.getInt("claims"), resultSet.getDouble("claimable_assurance"));
+							resultSet.getString("subscription_date_end"),
+							Status.findString(resultSet.getString("status")), resultSet.getString("due_date_payment"),
+							resultSet.getString("due_date_termination"), resultSet.getDouble("currency_coin_qty"),
+							resultSet.getDouble("sum_assurance"), resultSet.getInt("claims"),
+							resultSet.getDouble("claimable_assurance"), resultSet.getLong("users_id"));
 					items.add(transactionsModel);
-					return items;
+				
 				}
 			}
 
@@ -262,13 +411,15 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 	}
 
 	public void checkTermination() {
+
 		Connection connection = null;
 		PreparedStatement statement = null;
 		StringBuilder sql = new StringBuilder("update " + this.tableName
-				+ " set status = 'Terminated' where  date_part('year', due_date_termination ::date) <= date_part('year', current_timestamp::date ) and date_part('month', due_date_termination::date) + 2 <= date_part('month', current_timestamp::date)  and date_part('day',due_date_termination::date) <= date_part('day', current_timestamp::date)");
+				+ " set status = ? where  date_part('year', due_date_termination ::date) <= date_part('year', current_timestamp::date ) and date_part('month', due_date_termination::date) + 2 <= date_part('month', current_timestamp::date)  and date_part('day',due_date_termination::date) <= date_part('day', current_timestamp::date)");
 		try {
 			connection = getConnection();
 			statement = connection.prepareStatement(sql.toString());
+			statement.setString(1, Status.TERMINATED.getTitle());
 			statement.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();

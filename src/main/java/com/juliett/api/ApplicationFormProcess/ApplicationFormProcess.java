@@ -15,6 +15,9 @@ import com.juliett.api.model.enums.ResponseCode;
 import com.juliett.commons.process.AbstractProcess;
 import com.juliett.core.ApplicationForm.model.ApplicationFormModel;
 import com.juliett.core.ApplicationFormService.ApplicationFormService;
+import com.juliett.core.AutoEmailModel.AutoEmailModel;
+import com.juliett.core.AutoEmailService.AutoEmailService;
+import com.juliett.core.AutoEmailer.AutoEmailer;
 import com.juliett.core.DateCalucator.DateCalculator;
 import com.juliett.core.InsuranceType.model.InsuranceTypeModel;
 import com.juliett.core.InsuranceTypeService.InsuranceTypeService;
@@ -27,6 +30,7 @@ import com.juliett.core.TransactionsService.TransactionsService;
 import com.juliett.core.Users.model.UsersModel;
 import com.juliett.core.UsersService.UsersService;
 import com.juliett.core.commons.ApiCall.ApiCall;
+import com.juliett.core.model.enums.Status;
 import com.xurpas.development.core.exception.XDevServiceException;
 import com.xurpas.development.core.logger.Logger;
 import com.xurpas.development.core.tools.Util;
@@ -39,10 +43,12 @@ public class ApplicationFormProcess extends AbstractProcess {
 	private TransactionsService transactionsService;
 	private ProductsService productsService;
 	private PolicyService policyService;
+	private AutoEmailService autoEmailService;
 
 	public ApplicationFormProcess(ApplicationFormService applicationFormService, UsersService usersService,
 			InsuranceTypeService insuranceTypeService, TransactionsService transactionsService,
-			ProductsService productsService, PolicyService policyService, Logger logger) {
+			ProductsService productsService, PolicyService policyService, AutoEmailService autoEmailService,
+			Logger logger) {
 		super(logger);
 		this.applicationFormService = applicationFormService;
 		this.usersService = usersService;
@@ -50,6 +56,7 @@ public class ApplicationFormProcess extends AbstractProcess {
 		this.transactionsService = transactionsService;
 		this.productsService = productsService;
 		this.policyService = policyService;
+		this.autoEmailService = autoEmailService;
 
 	}
 
@@ -73,7 +80,7 @@ public class ApplicationFormProcess extends AbstractProcess {
 
 		switch (subpathEndpoint.substring(1)) {
 		case "apply":
-			applicationForm(request, response);
+			sendEmailToTerminated(request, response);
 			return;
 		case "approve":
 			approveApplication(request, response);
@@ -110,6 +117,7 @@ public class ApplicationFormProcess extends AbstractProcess {
 				applicationForm.setApprovedBy(null);
 				applicationForm.setDateApproved(null);
 				applicationForm.setIsApproved(false);
+
 				Long insuranceType = applicationForm.getInsuranceTypeId();
 				List<InsuranceTypeModel> insuranceTypeModel = (List<InsuranceTypeModel>) insuranceTypeService
 						.findTypeById(insuranceType);
@@ -187,9 +195,14 @@ public class ApplicationFormProcess extends AbstractProcess {
 						.findApplicationById(id);
 
 				Long productId = applicationToTransaction.get(0).getProductId();
-
+				transactionsModel.setPlansCategory(applicationToTransaction.get(0).getPlanId());
 				List<ProductsModel> productsModel = (List<ProductsModel>) productsService.findProductsById(productId);
 
+				List<TransactionsModel> getUsersName = (List<TransactionsModel>) transactionsService.getUsersName();
+				String firstName = getUsersName.get(0).getFirstName();
+				String lastName = getUsersName.get(0).getLastName();
+				String fullName = firstName + " " + lastName;
+				String email = getUsersName.get(0).getEmail();
 				Integer monthly = productsModel.get(0).getMonthy();
 				Integer quarterly = productsModel.get(0).getQuarterly();
 				Integer cash = productsModel.get(0).getCash();
@@ -216,7 +229,8 @@ public class ApplicationFormProcess extends AbstractProcess {
 				transactionsModel.setApplicationFormId(id);
 				transactionsModel.setSubscriptionDate(applicationFormModel.getDateApproved());
 				transactionsModel.setTotalAmountPaid(0.0);
-				transactionsModel.setStatus("Active");
+				transactionsModel.setStatus(Status.ACTIVE);
+				transactionsModel.setUsersId(applicationFormModel.getUsersId());
 
 				String subscriptionDateEnd = dateCalculator.addYearToCurrentYear(term);
 
@@ -254,6 +268,13 @@ public class ApplicationFormProcess extends AbstractProcess {
 				transactionsService.insert(transactionsModel);
 				applicationFormService.update(applicationFormModel);
 				sendResponse(response, ResponseCode.OK, "Approved successfuly");
+				AutoEmailModel autoEmailModel = new AutoEmailModel();
+
+				Long tId = getUsersName.get(0).getId();
+				autoEmailModel.setTransactionsId(tId);
+				AutoEmailer autoEmail = new AutoEmailer();
+				autoEmail.sendMailSucessfullyInsured(email, fullName);
+				autoEmailService.insert(autoEmailModel);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -266,6 +287,54 @@ public class ApplicationFormProcess extends AbstractProcess {
 				e.printStackTrace();
 			}
 
+		}
+
+	}
+
+	public void sendEmailToTerminated(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		try {
+			List<TransactionsModel> transactionsModel = (List<TransactionsModel>) transactionsService
+					.findTransactionsTerminated();
+
+			int length = transactionsModel.size();
+			System.out.println(length + "lenghthh");
+
+			for (int i = 0; i < length; i++) {
+				List<TransactionsModel> getUsersInfo = (List<TransactionsModel>) transactionsService
+						.getUsersInfo(transactionsModel.get(i).getId());
+				System.out.println("i is incrementing " + i);
+
+				if (transactionsModel.get(i).getStatus() == Status.TERMINATED) {
+
+					System.out.println(
+							getUsersInfo.get(0).getEmail() + getUsersInfo.get(0).getFirstName() + "weh di nga");
+					AutoEmailer autoEmail = new AutoEmailer();
+					try {
+						autoEmail.sendMailTermination(getUsersInfo.get(0).getEmail(),
+								getUsersInfo.get(0).getFirstName());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+					}
+
+					AutoEmailModel autoEmail2 = new AutoEmailModel();
+					autoEmail2.setTransactionsId(transactionsModel.get(i).getId());
+					autoEmail2.setTermination(true);
+					autoEmail2.setApproval(false);
+					autoEmail2.setNoticeDueDate(false);
+					try {
+						autoEmailService.update(autoEmail2);
+					} catch (XDevServiceException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+
+			sendResponse(response, ResponseCode.OK, transactionsModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+			e.getMessage();
 		}
 
 	}

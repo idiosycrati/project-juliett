@@ -80,7 +80,7 @@ public class AuthenticationFilter extends AbstractProcess implements Filter {
 
 				System.out.println(e.getMessage());
 				res.setStatus(500);
-				sendError(res, ResponseCode.INTERNAL_SERVER_ERROR, "Internal server error");
+				sendError(res, ResponseCode.INTERNAL_SERVER_ERROR, "Internal server error "+e.getMessage());
 			}
 		} else {
 			chain.doFilter(request, response);

@@ -3,28 +3,30 @@ package com.juliett.core.model.enums;
 import java.util.Arrays;
 
 public enum Status {
-    INVALID(400, "INVALID"),
-    VALID(200, "VALID");
+	TERMINATED("terminated"), ACTIVE("active"), EXPIRED("expired"), NULL("null");
 
-    public final Integer code;
+	private final String title;
 
-    public final String description;
+	Status(String title) {
+		this.title = title;
+	}
 
-    Status(Integer code, String description) {
-        this.code = code;
-        this.description = description;
-    }
+	public static Status findString(String status) {
+		switch (status) {
+		case "terminated":
+			return TERMINATED;
+		case "active":
+			return ACTIVE;
+		case "expired":
+			return EXPIRED;
 
-    public static Status findStatus(Integer code) {
-        return Arrays.stream(Status.values()).filter(status-> code.equals(status.code)).findAny().orElse(INVALID);
-    }
+		default:
+			return NULL;
+		}
+	}
 
-    @Override
-    public String toString() {
-        return this.description;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public static void main(String[] args) {
-        System.out.println();
-    }
 }

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.juliett.api.model.enums.ResponseCode;
 import com.juliett.commons.process.AbstractProcess;
+import com.juliett.core.AutoEmailer.AutoEmailer;
 import com.juliett.core.IncidentReportModel.IncidentReportModel;
 import com.juliett.core.IncidentReportService.IncidentReportService;
 import com.juliett.core.Transactions.model.TransactionsModel;
@@ -55,6 +56,7 @@ public class IncidentReportProcess extends AbstractProcess {
 		case "approve":
 			approveReport(request, response);
 			return;
+
 		default:
 			response.sendRedirect("/project-juliett");
 			return;
@@ -148,4 +150,5 @@ public class IncidentReportProcess extends AbstractProcess {
 		}
 
 	}
+
 }
