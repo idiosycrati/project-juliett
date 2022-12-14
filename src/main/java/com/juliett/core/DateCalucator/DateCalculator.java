@@ -36,5 +36,16 @@ public class DateCalculator {
 		return result;
 
 	}
-	
+
+	public String addDaysToDays(String date, int n) {
+		LocalDate date2 = LocalDate.parse(date);
+		// Displaying date
+
+		// Add 2 months to the date
+		LocalDate newDate = date2.plusDays(n);
+		String result = newDate.toString();
+		return result;
+
+	}
+
 }

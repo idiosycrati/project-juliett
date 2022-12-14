@@ -1,7 +1,9 @@
 package com.juliett.core.Transactions.model;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.juliett.core.model.enums.Status;
-import com.sendgrid.helpers.mail.objects.Email;
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 
 public class TransactionsModel {
 

@@ -77,11 +77,18 @@
 		<servlet-name>IncidentReportController</servlet-name>
 		<servlet-class>com.juliett.api.IncidentReportController.IncidentReportController</servlet-class>
 	</servlet>
-
+	<servlet>
+		<servlet-name>TransactionsDetailsController</servlet-name>
+		<servlet-class>com.juliett.api.TransactionsDetailsController.TransactionsDetailsController</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>PolicyController</servlet-name>
 		<url-pattern>/policy</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TransactionsDetailsController</servlet-name>
+		<url-pattern>/transact/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>PaymentController</servlet-name>
@@ -145,6 +152,7 @@
 		<servlet-name>TransactionsController</servlet-name>
 		<servlet-name>PaymentController</servlet-name>
 		<servlet-name>IncidentReportController</servlet-name>
+		<servlet-name>TransactionsDetailsController</servlet-name>
 	</filter-mapping>
 
 </web-app>

@@ -11,6 +11,7 @@ import com.juliett.api.model.enums.ResponseCode;
 import com.juliett.core.AutoEmailModel.AutoEmailModel;
 import com.juliett.core.AutoEmailService.AutoEmailService;
 import com.juliett.core.AutoEmailer.AutoEmailer;
+import com.juliett.core.DateCalucator.DateCalculator;
 import com.juliett.core.FinanceEntityService.FinanceEntityService;
 import com.juliett.core.Transactions.model.TransactionsModel;
 import com.juliett.core.TransactionsService.TransactionsService;
@@ -34,6 +35,15 @@ public class ThreadCheckTermination extends Thread {
 		while (true) {
 //			sendEmailToTerminated();
 			try {
+				dueDateNotification();
+			} catch (XDevServiceException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
 				TimeUnit.SECONDS.sleep(2);
 			} catch (InterruptedException e) {
 
@@ -45,50 +55,64 @@ public class ThreadCheckTermination extends Thread {
 
 	public void sendEmailToTerminated() {
 
-		try {
-			List<TransactionsModel> transactionsModel = (List<TransactionsModel>) transactionsService
-					.findTransactionsTerminated();
+		List<TransactionsModel> transactionsModel = (List<TransactionsModel>) transactionsService
+				.findTransactionsTerminated();
 
-			int length = transactionsModel.size();
-			System.out.println(length + "lenghthh");
+		int length = transactionsModel.size();
+		System.out.println(length + "lenghthh");
 
-			for (int i = 0; i < length; i++) {
-				List<TransactionsModel> getUsersInfo = (List<TransactionsModel>) transactionsService
-						.getUsersInfo(transactionsModel.get(i).getId());
-				System.out.println("i is incrementing " + i);
-				AutoEmailModel autoEmail2 = new AutoEmailModel();
-				List<AutoEmailModel> autoEmailGet = (List<AutoEmailModel>) autoEmailService
-						.findByTransactionsId(transactionsModel.get(i).getId());
-				if (transactionsModel.get(i).getStatus() == Status.TERMINATED
-						&& !autoEmailGet.get(0).getTermination()) {
+		for (int i = 0; i < length; i++) {
+			List<TransactionsModel> getUsersInfo = (List<TransactionsModel>) transactionsService
+					.getUsersInfo(transactionsModel.get(i).getId());
+			System.out.println("i is incrementing " + i);
+			AutoEmailModel autoEmail2 = new AutoEmailModel();
+			List<AutoEmailModel> autoEmailGet = (List<AutoEmailModel>) autoEmailService
+					.findByTransactionsId(transactionsModel.get(i).getId());
+			if (transactionsModel.get(i).getStatus() == Status.TERMINATED && !autoEmailGet.get(0).getTermination()) {
 
-					System.out.println(
-							getUsersInfo.get(0).getEmail() + getUsersInfo.get(0).getFirstName() + "weh di nga");
-					AutoEmailer autoEmail = new AutoEmailer();
-					try {
-						autoEmail.sendMailTermination(getUsersInfo.get(0).getEmail(),
-								getUsersInfo.get(0).getFirstName());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-					}
+				System.out.println(getUsersInfo.get(0).getEmail() + getUsersInfo.get(0).getFirstName() + "weh di nga");
+				AutoEmailer autoEmail = new AutoEmailer();
+				try {
+					autoEmail.sendMailTermination(getUsersInfo.get(0).getEmail(), getUsersInfo.get(0).getFirstName());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+				}
 
-					autoEmail2.setTransactionsId(transactionsModel.get(i).getId());
-					autoEmail2.setTermination(true);
-					autoEmail2.setApproval(false);
-					autoEmail2.setNoticeDueDate(false);
-					try {
-						autoEmailService.update(autoEmail2);
-					} catch (XDevServiceException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				autoEmail2.setTransactionsId(transactionsModel.get(i).getId());
+				autoEmail2.setTermination(true);
+				autoEmail2.setApproval(false);
+				autoEmail2.setNoticeDueDate(false);
+				try {
+					autoEmailService.update(autoEmail2);
+				} catch (XDevServiceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			e.getMessage();
-
 		}
+
+	}
+
+	public void dueDateNotification() throws XDevServiceException, IOException {
+		List<TransactionsModel> getAllTransact = (List<TransactionsModel>) transactionsService.list();
+		int length = getAllTransact.size();
+		for (int i = 0; i > length; i++) {
+			List<TransactionsModel> getUsersInfo = (List<TransactionsModel>) transactionsService
+					.getUsersInfo(getAllTransact.get(i).getId());
+			String dueDate = getAllTransact.get(i).getDueDatePayment();
+			DateCalculator dateCalc = new DateCalculator();
+			String dateCompare = dateCalc.addDaysToDays(dueDate, 10);
+			String dateNow = java.time.LocalDate.now().toString();
+			String dueDateTermination = getAllTransact.get(i).getDueDateTermination();
+			System.out.println(dateCompare + " comparing to " + dateNow);
+			if (dateCompare.equals(dateNow)) {
+				String email = getUsersInfo.get(i).getEmail();
+				String firstName = getUsersInfo.get(i).getFirstName();
+
+				AutoEmailer autoEmail = new AutoEmailer();
+				autoEmail.sendMailDueDate(email, firstName, dueDate, dueDateTermination);
+			}
+		}
+
 	}
 }

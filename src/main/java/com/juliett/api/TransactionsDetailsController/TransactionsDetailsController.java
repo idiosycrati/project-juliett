@@ -1,4 +1,4 @@
-package com.juliett.api.ApplicationFormController;
+package com.juliett.api.TransactionsDetailsController;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -10,28 +10,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.juliett.api.ApplicationFormProcess.ApplicationFormProcess;
-import com.juliett.commons.servlet.AbstractServlet;
-import com.xurpas.development.core.exception.XDevServiceException;
 
-@WebServlet("/ApplicationFormController")
+import com.juliett.api.TransactionsDetailsProcess.TransactionsDetailsProcess;
+import com.juliett.commons.servlet.AbstractServlet;
+
+@WebServlet("/TransactionsDetailsController")
 /**
  * Servlet implementation class ProductsController
  */
-public class ApplicationFormController extends AbstractServlet implements Servlet {
+public class TransactionsDetailsController extends AbstractServlet implements Servlet {
 	private static final long serialVersionUID = 1L;
 
-	private final ApplicationFormProcess applicationFormProcess;
+	private final TransactionsDetailsProcess transactionsDetailsProcess;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
 
-	public ApplicationFormController() {
+	public TransactionsDetailsController() {
 		super();
-		this.applicationFormProcess = new ApplicationFormProcess(getApplicationFormService(), getUsersService(),
-				getInsuranceTypeService(), getTransactionsService(), getProductsService(), getPolicyService(),
-				getAutoEmailService(), getLogger());
+		this.transactionsDetailsProcess = new TransactionsDetailsProcess(getTransactionsDetailsService(),
+				getTransactionsService(), getUsersService(), getLogger());
 
 		// TODO Auto-generated constructor stub
 	}
@@ -44,7 +43,7 @@ public class ApplicationFormController extends AbstractServlet implements Servle
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
-		applicationFormProcess.getMethod(request, response);
+		transactionsDetailsProcess.getMethod(request, response);
 
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
@@ -59,25 +58,12 @@ public class ApplicationFormController extends AbstractServlet implements Servle
 		// TODO Auto-generated method stub
 
 		try {
-			applicationFormProcess.postMethod(request, response);
+			transactionsDetailsProcess.postMethod(request, response);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XDevServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
 
 	}
-
-	@Override
-	protected void doPatch(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		applicationFormProcess.patchMethod(request, response);
-	}
-
 }

@@ -28,6 +28,8 @@ import com.juliett.core.ProductsService.ProductsService;
 import com.juliett.core.ProductsServiceImpl.ProductsServiceImpl;
 import com.juliett.core.SampleService.SampleService;
 import com.juliett.core.SampleServiceImpl.SampleServiceImpl;
+import com.juliett.core.TransactionsDetailsService.TransactionsDetailsService;
+import com.juliett.core.TransactionsDetailsServiceImpl.TransactionsDetailsServiceImpl;
 import com.juliett.core.TransactionsService.TransactionsService;
 import com.juliett.core.TransactionsServiceImpl.TransactionsServiceImpl;
 import com.juliett.core.UsersService.UsersService;
@@ -64,6 +66,7 @@ public class AbstractServlet extends HttpServlet {
 	private static PaymentService paymentService;
 	private static IncidentReportService incidentReportService;
 	private static AutoEmailService autoEmailService;
+	private static TransactionsDetailsService transactionsDetailsService;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -139,6 +142,9 @@ public class AbstractServlet extends HttpServlet {
 		}
 		if (autoEmailService == null) {
 			autoEmailService = new AutoEmailServiceImpl(databaseManager);
+		}
+		if (transactionsDetailsService == null) {
+			transactionsDetailsService = new TransactionsDetailsServiceImpl(databaseManager);
 		}
 
 	}
@@ -277,6 +283,14 @@ public class AbstractServlet extends HttpServlet {
 
 	public static void setAutoEmailService(AutoEmailService autoEmailService) {
 		AbstractServlet.autoEmailService = autoEmailService;
+	}
+
+	public static TransactionsDetailsService getTransactionsDetailsService() {
+		return transactionsDetailsService;
+	}
+
+	public static void setTransactionsDetailsService(TransactionsDetailsService transactionsDetailsService) {
+		AbstractServlet.transactionsDetailsService = transactionsDetailsService;
 	}
 
 }

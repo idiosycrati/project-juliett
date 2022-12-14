@@ -74,13 +74,13 @@ public class ApplicationFormProcess extends AbstractProcess {
 	}
 
 	public void postMethod(HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ParseException {
+			throws IOException, ParseException, XDevServiceException {
 
 		String subpathEndpoint = request.getPathInfo();
 
 		switch (subpathEndpoint.substring(1)) {
 		case "apply":
-			sendEmailToTerminated(request, response);
+			dueDateNotification();
 			return;
 		case "approve":
 			approveApplication(request, response);
@@ -291,50 +291,25 @@ public class ApplicationFormProcess extends AbstractProcess {
 
 	}
 
-	public void sendEmailToTerminated(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void dueDateNotification() throws XDevServiceException, IOException {
+		List<TransactionsModel> getAllTransact = (List<TransactionsModel>) transactionsService.list();
+		int length = getAllTransact.size();
+		for (int i = 0; i > length; i++) {
+			List<TransactionsModel> getUsersInfo = (List<TransactionsModel>) transactionsService
+					.getUsersInfo(getAllTransact.get(i).getId());
+			String dueDate = getAllTransact.get(i).getDueDatePayment();
+			DateCalculator dateCalc = new DateCalculator();
+			String dateCompare = dateCalc.addDaysToDays(dueDate, 10);
+			String dateNow = java.time.LocalDate.now().toString();
+			String dueDateTermination = getAllTransact.get(i).getDueDateTermination();
+			System.out.println(dateCompare + " comparing to " + dateNow);
+			if (dateCompare.equals(dateNow)) {
+				String email = getUsersInfo.get(i).getEmail();
+				String firstName = getUsersInfo.get(i).getFirstName();
 
-		try {
-			List<TransactionsModel> transactionsModel = (List<TransactionsModel>) transactionsService
-					.findTransactionsTerminated();
-
-			int length = transactionsModel.size();
-			System.out.println(length + "lenghthh");
-
-			for (int i = 0; i < length; i++) {
-				List<TransactionsModel> getUsersInfo = (List<TransactionsModel>) transactionsService
-						.getUsersInfo(transactionsModel.get(i).getId());
-				System.out.println("i is incrementing " + i);
-
-				if (transactionsModel.get(i).getStatus() == Status.TERMINATED) {
-
-					System.out.println(
-							getUsersInfo.get(0).getEmail() + getUsersInfo.get(0).getFirstName() + "weh di nga");
-					AutoEmailer autoEmail = new AutoEmailer();
-					try {
-						autoEmail.sendMailTermination(getUsersInfo.get(0).getEmail(),
-								getUsersInfo.get(0).getFirstName());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-					}
-
-					AutoEmailModel autoEmail2 = new AutoEmailModel();
-					autoEmail2.setTransactionsId(transactionsModel.get(i).getId());
-					autoEmail2.setTermination(true);
-					autoEmail2.setApproval(false);
-					autoEmail2.setNoticeDueDate(false);
-					try {
-						autoEmailService.update(autoEmail2);
-					} catch (XDevServiceException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+				AutoEmailer autoEmail = new AutoEmailer();
+				autoEmail.sendMailDueDate(email, firstName, dueDate, dueDateTermination);
 			}
-
-			sendResponse(response, ResponseCode.OK, transactionsModel);
-		} catch (Exception e) {
-			e.printStackTrace();
-			e.getMessage();
 		}
 
 	}
