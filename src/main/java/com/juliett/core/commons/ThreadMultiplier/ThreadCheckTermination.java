@@ -34,15 +34,9 @@ public class ThreadCheckTermination extends Thread {
 	public void run() {
 		while (true) {
 //			sendEmailToTerminated();
-			try {
-				dueDateNotification();
-			} catch (XDevServiceException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			
+			transactionsService.checkTermination();
+		
 			try {
 				TimeUnit.SECONDS.sleep(2);
 			} catch (InterruptedException e) {

@@ -27,4 +27,5 @@ public interface TransactionsRepository extends AbstractRepository<TransactionsM
 
 	public Collection<TransactionsModel> getUsersName();
 	public Collection<TransactionsModel> getUsersInfo(Long id);
+	public Collection<TransactionsModel> findTransactionsActive();
 }

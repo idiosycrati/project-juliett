@@ -80,7 +80,7 @@ public class ApplicationFormProcess extends AbstractProcess {
 
 		switch (subpathEndpoint.substring(1)) {
 		case "apply":
-			dueDateNotification();
+			applicationForm(request, response);
 			return;
 		case "approve":
 			approveApplication(request, response);
@@ -292,21 +292,27 @@ public class ApplicationFormProcess extends AbstractProcess {
 	}
 
 	public void dueDateNotification() throws XDevServiceException, IOException {
-		List<TransactionsModel> getAllTransact = (List<TransactionsModel>) transactionsService.list();
+		List<TransactionsModel> getAllTransact = (List<TransactionsModel>) transactionsService.findTransactionsActive();
 		int length = getAllTransact.size();
-		for (int i = 0; i > length; i++) {
+		System.out.println(length + "length ");
+		System.out.println(System.getenv("SEND_GRID_API_KEY")+ "environment key api");
+		for (int i = 0; i < length; i++) {
+			System.out.println("running "+ i);
 			List<TransactionsModel> getUsersInfo = (List<TransactionsModel>) transactionsService
 					.getUsersInfo(getAllTransact.get(i).getId());
+			System.out.println(getAllTransact.get(i).getDueDatePayment() + " try nga " + getUsersInfo.size());
+			System.out.println("id is "+ getAllTransact.get(i).getId());
 			String dueDate = getAllTransact.get(i).getDueDatePayment();
+			System.out.println(dueDate + " due Date");
 			DateCalculator dateCalc = new DateCalculator();
 			String dateCompare = dateCalc.addDaysToDays(dueDate, 10);
 			String dateNow = java.time.LocalDate.now().toString();
 			String dueDateTermination = getAllTransact.get(i).getDueDateTermination();
 			System.out.println(dateCompare + " comparing to " + dateNow);
-			if (dateCompare.equals(dateNow)) {
-				String email = getUsersInfo.get(i).getEmail();
-				String firstName = getUsersInfo.get(i).getFirstName();
-
+			if (!dateCompare.equals(dateNow)) {
+				String email = getUsersInfo.get(0).getEmail();
+				String firstName = getUsersInfo.get(0).getFirstName();
+				System.out.println(email);
 				AutoEmailer autoEmail = new AutoEmailer();
 				autoEmail.sendMailDueDate(email, firstName, dueDate, dueDateTermination);
 			}

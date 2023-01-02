@@ -163,7 +163,7 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 							resultSet.getDouble("sum_assurance"), resultSet.getInt("claims"),
 							resultSet.getDouble("claimable_assurance"), resultSet.getLong("users_id"));
 					items.add(transactionsModel);
-			
+
 				}
 			}
 
@@ -199,7 +199,7 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 							resultSet.getDouble("sum_assurance"), resultSet.getInt("claims"),
 							resultSet.getDouble("claimable_assurance"));
 					items.add(transactionsModel);
-					
+
 				}
 			}
 
@@ -236,7 +236,7 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 							resultSet.getDouble("sum_assurance"), resultSet.getInt("claims"),
 							resultSet.getDouble("claimable_assurance"));
 					items.add(transactionsModel);
-					
+
 				}
 			}
 
@@ -265,7 +265,7 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 					TransactionsModel transactionsModel = new TransactionsModel(resultSet.getString("first_name"),
 							resultSet.getString("last_name"), resultSet.getString("email"));
 					items.add(transactionsModel);
-					
+
 				}
 			}
 
@@ -296,7 +296,7 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 					TransactionsModel transactionsModel = new TransactionsModel(resultSet.getString("first_name"),
 							resultSet.getString("last_name"), resultSet.getString("email"));
 					items.add(transactionsModel);
-				
+
 				}
 			}
 
@@ -363,7 +363,44 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 							resultSet.getDouble("sum_assurance"), resultSet.getInt("claims"),
 							resultSet.getDouble("claimable_assurance"), resultSet.getLong("users_id"));
 					items.add(transactionsModel);
-					
+
+				}
+			}
+
+		} catch (Exception e) {
+			error(e.getMessage());
+
+		}
+		return items;
+	}
+
+	public Collection<TransactionsModel> findTransactionsActive() {
+		ResultSet resultSet = null;
+		List<TransactionsModel> items = null;
+		String status = "Active";
+		StringBuilder sql = new StringBuilder("select * from " + this.tableName + " where status = ? ");
+
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(sql.toString());
+			statement.setString(1, status);
+			sql(statement.toString());
+
+			resultSet = statement.executeQuery();
+
+			if (resultSet != null) {
+				items = new ArrayList<>();
+				while (resultSet.next()) {
+					TransactionsModel transactionsModel = new TransactionsModel(resultSet.getLong("id"),
+							resultSet.getLong("application_form_id"), resultSet.getDouble("total_amount_paid"),
+							resultSet.getDouble("remaining_balance"), resultSet.getString("subscription_date"),
+							resultSet.getString("subscription_date_end"),
+							Status.findString(resultSet.getString("status")), resultSet.getString("due_date_payment"),
+							resultSet.getString("due_date_termination"), resultSet.getDouble("currency_coin_qty"),
+							resultSet.getDouble("sum_assurance"), resultSet.getInt("claims"),
+							resultSet.getDouble("claimable_assurance"), resultSet.getLong("users_id"));
+					items.add(transactionsModel);
+
 				}
 			}
 
@@ -399,7 +436,7 @@ public class TransactionsRepositoryImpl extends AbstractRepositoryImpl<Transacti
 							resultSet.getDouble("sum_assurance"), resultSet.getInt("claims"),
 							resultSet.getDouble("claimable_assurance"), resultSet.getLong("users_id"));
 					items.add(transactionsModel);
-				
+
 				}
 			}
 

@@ -16,7 +16,7 @@ public class AutoEmailer {
 		Email from = new Email("justinjake.xurpas@gmail.com");
 		Email to = new Email(email);
 		String subject = "Sucessfuly insured";
-		SendGrid sg = new SendGrid("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");
+		SendGrid sg = new SendGrid(System.getenv("SEND_GRID_API_KEY"));
 		Content content = new Content("text/plain", "Greetings!, " + fullName
 				+ " Thank you for trusting our company for insuring your cuhchuchuchu enjoy ! \n \n \n Kind regards.");
 		Request request = new Request();
@@ -35,8 +35,8 @@ public class AutoEmailer {
 			throws IOException {
 		Email from = new Email("justinjake.xurpas@gmail.com");
 		Email to = new Email(email);
-		String subject = "Sucessfuly insured";
-		SendGrid sg = new SendGrid("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");
+		String subject = "Due Date notice";
+		SendGrid sg = new SendGrid(System.getenv("SEND_GRID_API_KEY"));
 		Content content = new Content("text/plain", "Hello + " + firstName
 				+ ", I hope you are well. I just wanted to drop you a quick note to remind you that you have unpaid bills due for payment on "
 				+ dueDate + " Please pay before " + dueDateTermination + " Thank you! \n \n \n Kind regards.");
@@ -56,7 +56,7 @@ public class AutoEmailer {
 		Email from = new Email("justinjake.xurpas@gmail.com");
 		Email to = new Email(email);
 		String subject = "Termination letter";
-		SendGrid sg = new SendGrid("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");
+		SendGrid sg = new SendGrid(System.getenv("SEND_GRID_API_KEY"));
 		Content content = new Content("text/plain", "Hello + " + firstName + ", Terminated \n \n \n Kind regards.");
 		Request request = new Request();
 		Mail mail = new Mail(from, subject, to, content);

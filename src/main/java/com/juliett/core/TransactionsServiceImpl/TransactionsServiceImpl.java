@@ -63,4 +63,9 @@ public class TransactionsServiceImpl extends AbstractServiceImpl<TransactionsMod
 	public Collection<TransactionsModel> getUsersInfo(Long id) {
 		return this.transactionsRepository.getUsersInfo(id);
 	}
+
+	public Collection<TransactionsModel> findTransactionsActive() {
+		return this.transactionsRepository.findTransactionsActive();
+	}
+
 }

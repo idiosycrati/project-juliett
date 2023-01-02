@@ -54,9 +54,7 @@ public class TransactionsDetailsProcess extends AbstractProcess {
 		case "claim":
 			getClaims(request, response);
 			return;
-		case "all":
-
-			return;
+	
 		default:
 			response.sendRedirect("/project-juliett");
 			return;
